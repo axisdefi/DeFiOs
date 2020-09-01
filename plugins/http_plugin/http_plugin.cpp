@@ -375,15 +375,15 @@ namespace eosio {
           */
          template<typename T>
          struct abstract_conn_impl : public detail::abstract_conn {
-            abstract_conn_impl(detail::connection_ptr<T> conn, http_plugin_impl& impl)
+            abstract_conn_impl(detail::connection_ptr<T> conn, http_plugin_impl* impl)
             :_conn(std::move(conn))
-            ,_impl(impl)
             {
-                _impl.requests_in_flight += 1;
+                _impl = std::shared_ptr<http_plugin_impl>(impl);
+                _impl->requests_in_flight += 1;
             }
 
             ~abstract_conn_impl() {
-                _impl.requests_in_flight -= 1;
+                _impl->requests_in_flight -= 1;
             }
 
             // No copy constructor and no move
@@ -393,11 +393,11 @@ namespace eosio {
             abstract_conn_impl& operator=(abstract_conn_impl&&) noexcept = default;
 
             bool verify_max_bytes_in_flight() override {
-               return _impl.verify_max_bytes_in_flight(_conn);
+               return _impl->verify_max_bytes_in_flight(_conn);
             }
 
             bool verify_max_requests_in_flight() override {
-               return _impl.verify_max_requests_in_flight(_conn);
+               return _impl->verify_max_requests_in_flight(_conn);
             }
 
             void handle_exception()override {
@@ -411,7 +411,7 @@ namespace eosio {
             }
 
             detail::connection_ptr<T> _conn;
-            http_plugin_impl &_impl;
+            std::shared_ptr<http_plugin_impl> _impl;
          };
 
          /**
@@ -422,7 +422,7 @@ namespace eosio {
           * @return abstract_conn_ptr backed by type specific implementations of the methods
           */
          template<typename T>
-         static detail::abstract_conn_ptr make_abstract_conn_ptr( detail::connection_ptr<T> conn, http_plugin_impl& impl ) {
+         static detail::abstract_conn_ptr make_abstract_conn_ptr( detail::connection_ptr<T> conn, http_plugin_impl* impl ) {
             return std::make_shared<abstract_conn_impl<T>>(conn, impl);
          }
 
@@ -605,7 +605,7 @@ namespace eosio {
                con->append_header( "Content-type", "application/json" );
                con->defer_http_response();
 
-               auto abstract_conn_ptr = make_abstract_conn_ptr<T>(con, *this);
+               auto abstract_conn_ptr = make_abstract_conn_ptr<T>(con, this);
                if( !verify_max_bytes_in_flight( con ) || !verify_max_requests_in_flight( con ) ) return;
 
                std::string resource = con->get_uri()->get_resource();
