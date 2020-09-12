@@ -170,7 +170,11 @@ const std::vector<const char*> genesis_intrinsics = {
    "memcpy",
    "memmove",
    "memcmp",
-   "memset"
+   "memset",
+   // include patch intrincit into genesis. @Jinius. 20200912
+    "is_feature_activated",
+    "preactivate_feature",
+    "set_proposed_producers_ex"
 };
 
 } } // namespace eosio::chain

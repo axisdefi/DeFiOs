@@ -1,6 +1,36 @@
 cmake_minimum_required( VERSION 3.8 )
 
-project( EOSIO )
+
+#################################################################################################################
+#     AXIS customized section.
+#################################################################################################################
+project( AXIS )
+
+set( BLOCKCHAIN_NAME "AXISDEFI" )
+set( CMAKE_CXX_STANDARD 17 )
+set( CMAKE_CXX_EXTENSIONS ON )
+set( CXX_STANDARD_REQUIRED ON)
+
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 0)
+set(VERSION_SUFFIX rc1)
+
+set( CLI_CLIENT_EXECUTABLE_NAME claxis )
+set( NODE_EXECUTABLE_NAME defios )
+set( KEY_STORE_EXECUTABLE_NAME kaxisd )
+
+if ("${EOSIO_ROOT_KEY}" STREQUAL "")
+   set(EOSIO_ROOT_KEY "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV")
+endif()
+message( STATUS "Using '${EOSIO_ROOT_KEY}' as public key for 'eosio' account" )
+
+set(CORE_SYMBOL_NAME "AXIS")
+
+#################################################################################################################
+#     EOS original section.
+#################################################################################################################
+
 include(CTest) # suppresses DartConfiguration.tcl error
 enable_testing()
 
@@ -18,25 +48,13 @@ include( GNUInstallDirs )
 include( InstallDirectoryPermissions )
 include( MASSigning )
 
-set( BLOCKCHAIN_NAME "EOSIO" )
-set( CMAKE_CXX_STANDARD 17 )
-set( CMAKE_CXX_EXTENSIONS ON )
-set( CXX_STANDARD_REQUIRED ON)
-
-set(VERSION_MAJOR 2)
-set(VERSION_MINOR 0)
-set(VERSION_PATCH 7)
-#set(VERSION_SUFFIX rc3)
-
 if(VERSION_SUFFIX)
     set(VERSION_FULL "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}-${VERSION_SUFFIX}")
 else()
     set(VERSION_FULL "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 endif()
 
-set( CLI_CLIENT_EXECUTABLE_NAME cleos )
-set( NODE_EXECUTABLE_NAME nodeos )
-set( KEY_STORE_EXECUTABLE_NAME keosd )
+
 
 # http://stackoverflow.com/a/18369825
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -55,7 +73,10 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 set(BUILD_DOXYGEN FALSE CACHE BOOL "Build doxygen documentation on every make")
-set(BUILD_MONGO_DB_PLUGIN FALSE CACHE BOOL "Build mongo database plugin")
+
+# rem out mongo db as deprecated.
+#set(BUILD_MONGO_DB_PLUGIN FALSE CACHE BOOL "Build mongo database plugin")
+
 set(ENABLE_MULTIVERSION_PROTOCOL_TEST FALSE CACHE BOOL "Enable nodeos multiversion protocol test")
 
 # add defaults for openssl
@@ -66,7 +87,9 @@ endif()
 # WASM runtimes to enable. Each runtime in this list will have:
 #  * definition EOSIO_<RUNTIME>_RUNTIME_ENABLED defined in public libchain interface
 #  * ctest entries with --runtime
+
 list(APPEND EOSIO_WASM_RUNTIMES wabt)   #always enable wabt; it works everywhere and parts of eosio still assume it's always available
+
 if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT WIN32)
    if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux" AND "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
       list(APPEND EOSIO_WASM_RUNTIMES eos-vm-oc)
@@ -101,7 +124,7 @@ endif()
 set( Boost_USE_STATIC_LIBS ON CACHE STRING "ON or OFF" )
 # Most boost deps get implictly picked up via fc, as just about everything links to fc. In addition we pick up
 # the pthread dependency through fc.
-find_package(Boost 1.67 REQUIRED COMPONENTS program_options unit_test_framework)
+find_package(Boost 1.71 REQUIRED COMPONENTS program_options unit_test_framework)
 
 if( APPLE AND UNIX )
 # Apple Specific Options Here
@@ -148,12 +171,6 @@ if (CORE_SYMBOL_NAME_LENGTH GREATER 7)
 endif()
 
 message( STATUS "Using '${CORE_SYMBOL_NAME}' as CORE symbol name" )
-
-if ("${EOSIO_ROOT_KEY}" STREQUAL "")
-   set(EOSIO_ROOT_KEY "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV")
-endif()
-
-message( STATUS "Using '${EOSIO_ROOT_KEY}' as public key for 'eosio' account" )
 
 add_subdirectory( libraries )
 add_subdirectory( plugins )
