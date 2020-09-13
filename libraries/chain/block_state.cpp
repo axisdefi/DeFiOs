@@ -56,7 +56,9 @@ namespace eosio { namespace chain {
          block_header_state result = std::move(cur).finish_next(b, pfs, std::forward<Extras>(extras)...);
 
          if (!result.additional_signatures.empty()) {
-            bool wtmsig_enabled = detail::is_builtin_activated(pfa, pfs, builtin_protocol_feature_t::wtmsig_block_signatures);
+            //bool wtmsig_enabled = detail::is_builtin_activated(pfa, pfs, builtin_protocol_feature_t::wtmsig_block_signatures);
+
+        	 bool wtmsig_enabled = true;
 
             EOS_ASSERT(wtmsig_enabled, block_validate_exception,
                        "Block has multiple signatures before activation of WTMsig Block Signatures");

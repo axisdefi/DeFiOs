@@ -1479,11 +1479,11 @@ BOOST_AUTO_TEST_CASE(more_deferred_transaction_tests) { try {
    validating_tester chain( tempdir, true );
    chain.execute_setup_policy( setup_policy::preactivate_feature_and_new_bios );
 
-   const auto& pfm = chain.control->get_protocol_feature_manager();
-   auto d = pfm.get_builtin_digest( builtin_protocol_feature_t::replace_deferred );
-   BOOST_REQUIRE( d );
-
-   chain.preactivate_protocol_features( {*d} );
+//   const auto& pfm = chain.control->get_protocol_feature_manager();
+//   auto d = pfm.get_builtin_digest( builtin_protocol_feature_t::replace_deferred );
+//   BOOST_REQUIRE( d );
+//
+//   chain.preactivate_protocol_features( {*d} );
    chain.produce_block();
 
    const auto& index = chain.control->db().get_index<generated_transaction_multi_index,by_id>();

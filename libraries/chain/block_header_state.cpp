@@ -197,24 +197,26 @@ namespace eosio { namespace chain {
       }
 
       if (new_producers) {
-         if ( detail::is_builtin_activated(prev_activated_protocol_features, pfs, builtin_protocol_feature_t::wtmsig_block_signatures) ) {
+         //if ( detail::is_builtin_activated(prev_activated_protocol_features, pfs, builtin_protocol_feature_t::wtmsig_block_signatures) )
+    	  {
             // add the header extension to update the block schedule
             emplace_extension(
                   h.header_extensions,
                   producer_schedule_change_extension::extension_id(),
                   fc::raw::pack( producer_schedule_change_extension( *new_producers ) )
             );
-         } else {
-            legacy::producer_schedule_type downgraded_producers;
-            downgraded_producers.version = new_producers->version;
-            for (const auto &p : new_producers->producers) {
-               p.authority.visit([&downgraded_producers, &p](const auto& auth){
-                  EOS_ASSERT(auth.keys.size() == 1 && auth.keys.front().weight == auth.threshold, producer_schedule_exception, "multisig block signing present before enabled!");
-                  downgraded_producers.producers.emplace_back(legacy::producer_key{p.producer_name, auth.keys.front().key});
-               });
-            }
-            h.new_producers = std::move(downgraded_producers);
          }
+//    	  else {
+//            legacy::producer_schedule_type downgraded_producers;
+//            downgraded_producers.version = new_producers->version;
+//            for (const auto &p : new_producers->producers) {
+//               p.authority.visit([&downgraded_producers, &p](const auto& auth){
+//                  EOS_ASSERT(auth.keys.size() == 1 && auth.keys.front().weight == auth.threshold, producer_schedule_exception, "multisig block signing present before enabled!");
+//                  downgraded_producers.producers.emplace_back(legacy::producer_key{p.producer_name, auth.keys.front().key});
+//               });
+//            }
+//            h.new_producers = std::move(downgraded_producers);
+//         }
       }
 
       return h;
@@ -242,7 +244,8 @@ namespace eosio { namespace chain {
       bool wtmsig_enabled = false;
 
       if (h.new_producers || exts.count(producer_schedule_change_extension::extension_id()) > 0 ) {
-         wtmsig_enabled = detail::is_builtin_activated(prev_activated_protocol_features, pfs, builtin_protocol_feature_t::wtmsig_block_signatures);
+         //wtmsig_enabled = detail::is_builtin_activated(prev_activated_protocol_features, pfs, builtin_protocol_feature_t::wtmsig_block_signatures);
+    	  wtmsig_enabled = true;
       }
 
       if( h.new_producers ) {
@@ -327,7 +330,9 @@ namespace eosio { namespace chain {
    )&&
    {
       if( !additional_signatures.empty() ) {
-         bool wtmsig_enabled = detail::is_builtin_activated(prev_activated_protocol_features, pfs, builtin_protocol_feature_t::wtmsig_block_signatures);
+         //bool wtmsig_enabled = detail::is_builtin_activated(prev_activated_protocol_features, pfs, builtin_protocol_feature_t::wtmsig_block_signatures);
+
+    	  bool wtmsig_enabled = true;
 
          EOS_ASSERT(wtmsig_enabled, producer_schedule_exception, "Block contains multiple signatures before WTMsig block signatures are enabled" );
       }
@@ -362,7 +367,10 @@ namespace eosio { namespace chain {
       h.producer_signature = result.header.producer_signature;
 
       if( !result.additional_signatures.empty() ) {
-         bool wtmsig_enabled = detail::is_builtin_activated(pfa, pfs, builtin_protocol_feature_t::wtmsig_block_signatures);
+         //bool wtmsig_enabled = detail::is_builtin_activated(pfa, pfs, builtin_protocol_feature_t::wtmsig_block_signatures);
+
+    	  bool wtmsig_enabled = true;
+
          EOS_ASSERT(wtmsig_enabled, producer_schedule_exception, "Block was signed with multiple signatures before WTMsig block signatures are enabled" );
       }
 

@@ -10,19 +10,19 @@ enum class protocol_feature_t : uint32_t {
 };
 
 enum class builtin_protocol_feature_t : uint32_t {
-   preactivate_feature,
-   only_link_to_existing_permission,
-   replace_deferred,
-   no_duplicate_deferred_id,
+   //preactivate_feature,
+   //only_link_to_existing_permission,
+   //replace_deferred,
+   //no_duplicate_deferred_id,
    fix_linkauth_restriction,
    disallow_empty_producer_schedule,
    restrict_action_to_self,
    only_bill_first_authorizer,
    forward_setcode,
-   get_sender,
+//   get_sender,
    ram_restrictions,
-   webauthn_key,
-   wtmsig_block_signatures,
+//   webauthn_key,
+//   wtmsig_block_signatures,
 };
 
 struct protocol_feature_subjective_restrictions {

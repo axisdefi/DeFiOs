@@ -339,13 +339,18 @@ void apply_eosio_linkauth(apply_context& context) {
                  "Failed to retrieve code for account: ${account}", ("account", requirement.code));
       if( requirement.requirement != config::eosio_any_name ) {
          const permission_object* permission = nullptr;
-         if( context.control.is_builtin_activated( builtin_protocol_feature_t::only_link_to_existing_permission ) ) {
+
+         // only_link_to_existing_permission is default.
+
+//         if( context.control.is_builtin_activated( builtin_protocol_feature_t::only_link_to_existing_permission ) )
+         {
             permission = db.find<permission_object, by_owner>(
                            boost::make_tuple( requirement.account, requirement.requirement )
                          );
-         } else {
-            permission = db.find<permission_object, by_name>(requirement.requirement);
          }
+//         else {
+//            permission = db.find<permission_object, by_name>(requirement.requirement);
+//         }
 
          EOS_ASSERT(permission != nullptr, permission_query_exception,
                     "Failed to retrieve permission: ${permission}", ("permission", requirement.requirement));

@@ -364,7 +364,11 @@ void apply_context::schedule_deferred_transaction( const uint128_t& sender_id, a
                                              && !control.sender_avoids_whitelist_blacklist_enforcement( receiver );
    trx_context.validate_referenced_accounts( trx, enforce_actor_whitelist_blacklist );
 
-   if( control.is_builtin_activated( builtin_protocol_feature_t::no_duplicate_deferred_id ) ) {
+
+   // no_duplicated_deferred_id was default.
+
+  // if( control.is_builtin_activated( builtin_protocol_feature_t::no_duplicate_deferred_id ) )
+   {
       auto exts = trx.validate_and_extract_extensions();
       if( exts.size() > 0 ) {
          auto itr = exts.lower_bound( deferred_transaction_generation_context::extension_id() );
@@ -397,10 +401,11 @@ void apply_context::schedule_deferred_transaction( const uint128_t& sender_id, a
       trx.expiration = time_point_sec();
       trx.ref_block_num = 0;
       trx.ref_block_prefix = 0;
-   } else {
-      trx.expiration = control.pending_block_time() + fc::microseconds(999'999); // Rounds up to nearest second (makes expiration check unnecessary)
-      trx.set_reference_block(control.head_block_id()); // No TaPoS check necessary
    }
+//   else {
+//      trx.expiration = control.pending_block_time() + fc::microseconds(999'999); // Rounds up to nearest second (makes expiration check unnecessary)
+//      trx.set_reference_block(control.head_block_id()); // No TaPoS check necessary
+//   }
 
    // Charge ahead of time for the additional net usage needed to retire the deferred transaction
    // whether that be by successfully executing, soft failure, hard failure, or expiration.
@@ -482,26 +487,30 @@ void apply_context::schedule_deferred_transaction( const uint128_t& sender_id, a
    if ( auto ptr = db.find<generated_transaction_object,by_sender_id>(boost::make_tuple(receiver, sender_id)) ) {
       EOS_ASSERT( replace_existing, deferred_tx_duplicate, "deferred transaction with the same sender_id and payer already exists" );
 
-      bool replace_deferred_activated = control.is_builtin_activated(builtin_protocol_feature_t::replace_deferred);
+      //bool replace_deferred_activated = control.is_builtin_activated(builtin_protocol_feature_t::replace_deferred);
 
-      EOS_ASSERT( replace_deferred_activated || !control.is_producing_block()
-                     || control.all_subjective_mitigations_disabled(),
-                  subjective_block_production_exception,
-                  "Replacing a deferred transaction is temporarily disabled." );
+//      EOS_ASSERT( replace_deferred_activated || !control.is_producing_block()
+//                     || control.all_subjective_mitigations_disabled(),
+//                  subjective_block_production_exception,
+//                  "Replacing a deferred transaction is temporarily disabled." );
 
       uint64_t orig_trx_ram_bytes = config::billable_size_v<generated_transaction_object> + ptr->packed_trx.size();
-      if( replace_deferred_activated ) {
-         add_ram_usage( ptr->payer, -static_cast<int64_t>( orig_trx_ram_bytes ) );
-      } else {
-         control.add_to_ram_correction( ptr->payer, orig_trx_ram_bytes );
+      //if( replace_deferred_activated )
+      {
+    	  add_ram_usage( ptr->payer, -static_cast<int64_t>( orig_trx_ram_bytes ) );
       }
+//      else {
+//         control.add_to_ram_correction( ptr->payer, orig_trx_ram_bytes );
+//      }
 
       transaction_id_type trx_id_for_new_obj;
-      if( replace_deferred_activated ) {
+      //if( replace_deferred_activated )
+      {
          trx_id_for_new_obj = trx.id();
-      } else {
-         trx_id_for_new_obj = ptr->trx_id;
       }
+//      else {
+//         trx_id_for_new_obj = ptr->trx_id;
+//      }
 
       // Use remove and create rather than modify because mutating the trx_id field in a modifier is unsafe.
       db.remove( *ptr );
