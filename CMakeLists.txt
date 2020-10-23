@@ -18,6 +18,9 @@ include( GNUInstallDirs )
 include( InstallDirectoryPermissions )
 include( MASSigning )
 
+#==============================================================
+#     Axis relatd defination.
+#==============================================================
 set( BLOCKCHAIN_NAME "EOSIO" )
 set( CMAKE_CXX_STANDARD 17 )
 set( CMAKE_CXX_EXTENSIONS ON )
@@ -27,6 +30,13 @@ set(VERSION_MAJOR 2)
 set(VERSION_MINOR 0)
 set(VERSION_PATCH 7)
 #set(VERSION_SUFFIX rc3)
+
+if ("${CORE_SYMBOL_NAME}" STREQUAL "")
+  set( CORE_SYMBOL_NAME "AXIS" )
+endif()
+string(TOUPPER ${CORE_SYMBOL_NAME} CORE_SYMBOL_NAME)
+
+#==============================================================
 
 if(VERSION_SUFFIX)
     set(VERSION_FULL "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}-${VERSION_SUFFIX}")
@@ -137,10 +147,7 @@ endif()
 
 include(utils)
 
-if ("${CORE_SYMBOL_NAME}" STREQUAL "")
-  set( CORE_SYMBOL_NAME "SYS" )
-endif()
-string(TOUPPER ${CORE_SYMBOL_NAME} CORE_SYMBOL_NAME)
+
 
 string(LENGTH ${CORE_SYMBOL_NAME} CORE_SYMBOL_NAME_LENGTH)
 if (CORE_SYMBOL_NAME_LENGTH GREATER 7)

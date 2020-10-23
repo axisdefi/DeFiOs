@@ -4,6 +4,9 @@
 
 #pragma GCC diagnostic ignored "-Wunused-variable"
 
+#define AXIS_MAX_SUPPLY_STR   "24000000.00000000"
+#define AXIS_INIT_SUPPLY_STR   "2400000.00000000"
+
 namespace eosio { namespace chain { namespace config {
 
 typedef __uint128_t uint128_t;
