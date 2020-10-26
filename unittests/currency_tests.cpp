@@ -590,16 +590,19 @@ BOOST_FIXTURE_TEST_CASE( test_input_quantity, currency_tester ) try {
       BOOST_REQUIRE_THROW(transfer(N(alice), N(carl), "20.50 USD"), eosio_assert_message_exception);
    }
 
-   // issue to alice using right precision
+   // issue to issuer account using right precision
    {
-      // 3050003 eosio_assert_message_exception: eosio_assert_message assertion failure
-      // assertion failure with message: tokens can only be issued to issuer account
+      auto initial_balance = get_balance(N(eosio_token));
+      auto trace = issue(N(eosio_token), "25.0256 CUR");
 
-      // @TODO:  how is passed in original test?   token issue from no owner account?
-      // auto trace = issue(N(alice), "25.0256 CUR");
+      BOOST_CHECK_EQUAL(true, chain_has_transaction(trace->id));
+      BOOST_CHECK_EQUAL(asset::from_string("25.0256 CUR"), get_balance(N(eosio_token)) - initial_balance);
+   }
 
-      // BOOST_CHECK_EQUAL(true, chain_has_transaction(trace->id));
-      // BOOST_CHECK_EQUAL(asset::from_string("125.0256 CUR"), get_balance(N(alice)));
+   // issue to alice fails
+   {
+      BOOST_CHECK_EXCEPTION(issue(N(alice), "25.0256 CUR"),
+                           eosio_assert_message_exception, eosio_assert_message_is("tokens can only be issued to issuer account") );
    }
 
 
