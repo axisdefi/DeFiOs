@@ -188,8 +188,9 @@ BOOST_AUTO_TEST_SUITE(bootseq_tests)
 BOOST_FIXTURE_TEST_CASE( bootseq_test, bootseq_tester ) {
     try {
 
-        // Create eosio.msig and eosio.token
-        create_accounts({N(eosio.msig), N(eosio.token), N(eosio.ram), N(eosio.ramfee), N(eosio.stake), N(eosio.vpay), N(eosio.bpay), N(eosio.saving) });
+        // Create system accounts
+        create_accounts({N(eosio.bpay), N(eosio.msig), N(eosio.names), N(eosio.ram), N(eosio.ramfee),
+                           N(eosio.saving), N(eosio.stake), N(eosio.token), N(eosio.vpay), N(eosio.rex)});
         // Set code for the following accounts:
         //  - eosio (code: eosio.bios) (already set by tester constructor)
         //  - eosio.msig (code: eosio.msig)
@@ -215,11 +216,11 @@ BOOST_FIXTURE_TEST_CASE( bootseq_test, bootseq_tester ) {
         BOOST_TEST(eosio_token_acc.is_privileged() == true);
 
 
-        // Create SYS tokens in eosio.token, set its manager as eosio
-        auto max_supply = core_from_string(AXIS_MAX_SUPPLY_STR); /// 1x larger than 1B initial tokens
-        auto initial_supply = core_from_string(AXIS_INIT_SUPPLY_STR); /// 1x larger than 1B initial tokens
+        auto max_supply = core_from_string(AXIS_MAX_SUPPLY_STR); // 24M
+        auto initial_supply = core_from_string(AXIS_INIT_SUPPLY_STR); // 2.4M
+        // Create 24 million SYS tokens in eosio.token, set its manager as eosio
         create_currency(N(eosio.token), config::system_account_name, max_supply);
-        // Issue the genesis supply of 1 billion SYS tokens to eosio.system
+        // Issue the genesis supply of 2.4 million SYS tokens to eosio.system
         issue(N(eosio.token), config::system_account_name, config::system_account_name, initial_supply);
 
         auto actual = get_balance(config::system_account_name);
@@ -234,8 +235,9 @@ BOOST_FIXTURE_TEST_CASE( bootseq_test, bootseq_tester ) {
 
         // Buy ram and stake cpu and net for each genesis accounts
         for( const auto& a : test_genesis ) {
+           std::cout << a.aname << std::endl;
            auto ib = a.initial_balance;
-           auto ram = 1000;
+           auto ram = 10000;
            auto net = (ib - ram) / 2;
            auto cpu = ib - net - ram;
 
