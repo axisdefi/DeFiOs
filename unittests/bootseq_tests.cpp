@@ -14,8 +14,6 @@
 #else
 #define TESTER validating_tester
 #endif
-
-
 using namespace eosio;
 using namespace eosio::chain;
 using namespace eosio::testing;
@@ -29,38 +27,38 @@ struct genesis_account {
 };
 
 std::vector<genesis_account> test_genesis( {
-  {N(b1),       100'000'000'0000ll},
-  {N(whale4),    40'000'000'0000ll},
-  {N(whale3),    30'000'000'0000ll},
-  {N(whale2),    20'000'000'0000ll},
-  {N(proda),      1'000'000'0000ll},
-  {N(prodb),      1'000'000'0000ll},
-  {N(prodc),      1'000'000'0000ll},
-  {N(prodd),      1'000'000'0000ll},
-  {N(prode),      1'000'000'0000ll},
-  {N(prodf),      1'000'000'0000ll},
-  {N(prodg),      1'000'000'0000ll},
-  {N(prodh),      1'000'000'0000ll},
-  {N(prodi),      1'000'000'0000ll},
-  {N(prodj),      1'000'000'0000ll},
-  {N(prodk),      1'000'000'0000ll},
-  {N(prodl),      1'000'000'0000ll},
-  {N(prodm),      1'000'000'0000ll},
-  {N(prodn),      1'000'000'0000ll},
-  {N(prodo),      1'000'000'0000ll},
-  {N(prodp),      1'000'000'0000ll},
-  {N(prodq),      1'000'000'0000ll},
-  {N(prodr),      1'000'000'0000ll},
-  {N(prods),      1'000'000'0000ll},
-  {N(prodt),      1'000'000'0000ll},
-  {N(produ),      1'000'000'0000ll},
-  {N(runnerup1),  1'000'000'0000ll},
-  {N(runnerup2),  1'000'000'0000ll},
-  {N(runnerup3),  1'000'000'0000ll},
-  {N(minow1),           100'0000ll},
-  {N(minow2),             1'0000ll},
-  {N(minow3),             1'0000ll},
-  {N(masses),   800'000'000'0000ll}
+  {N(b1),       100'000'00000000ll},
+  {N(whale4),    40'000'00000000ll},
+  {N(whale3),    30'000'00000000ll},
+  {N(whale2),    20'000'00000000ll},
+  {N(proda),      1'000'00000000ll},
+  {N(prodb),      1'000'00000000ll},
+  {N(prodc),      1'000'00000000ll},
+  {N(prodd),      1'000'00000000ll},
+  {N(prode),      1'000'00000000ll},
+  {N(prodf),      1'000'00000000ll},
+  {N(prodg),      1'000'00000000ll},
+  {N(prodh),      1'000'00000000ll},
+  {N(prodi),      1'000'00000000ll},
+  {N(prodj),      1'000'00000000ll},
+  {N(prodk),      1'000'00000000ll},
+  {N(prodl),      1'000'00000000ll},
+  {N(prodm),      1'000'00000000ll},
+  {N(prodn),      1'000'00000000ll},
+  {N(prodo),      1'000'00000000ll},
+  {N(prodp),      1'000'00000000ll},
+  {N(prodq),      1'000'00000000ll},
+  {N(prodr),      1'000'00000000ll},
+  {N(prods),      1'000'00000000ll},
+  {N(prodt),      1'000'00000000ll},
+  {N(produ),      1'000'00000000ll},
+  {N(runnerup1),  1'000'00000000ll},
+  {N(runnerup2),  1'000'00000000ll},
+  {N(runnerup3),  1'000'00000000ll},
+  {N(minow1),           10000000ll},
+  {N(minow2),             100000ll},
+  {N(minow3),             100000ll},
+  {N(masses),   800'000'00000000ll}
 });
 
 class bootseq_tester : public TESTER {
@@ -185,6 +183,8 @@ public:
 
 BOOST_AUTO_TEST_SUITE(bootseq_tests)
 
+
+
 BOOST_FIXTURE_TEST_CASE( bootseq_test, bootseq_tester ) {
     try {
 
@@ -216,8 +216,8 @@ BOOST_FIXTURE_TEST_CASE( bootseq_test, bootseq_tester ) {
 
 
         // Create SYS tokens in eosio.token, set its manager as eosio
-        auto max_supply = core_from_string("10000000000.0000"); /// 1x larger than 1B initial tokens
-        auto initial_supply = core_from_string("1000000000.0000"); /// 1x larger than 1B initial tokens
+        auto max_supply = core_from_string(AXIS_MAX_SUPPLY_STR); /// 1x larger than 1B initial tokens
+        auto initial_supply = core_from_string(AXIS_INIT_SUPPLY_STR); /// 1x larger than 1B initial tokens
         create_currency(N(eosio.token), config::system_account_name, max_supply);
         // Issue the genesis supply of 1 billion SYS tokens to eosio.system
         issue(N(eosio.token), config::system_account_name, config::system_account_name, initial_supply);
